@@ -34,9 +34,8 @@ EOF
 
 /**
  * References:
- * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71</a>
- * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_80.pdf">NTG_80</a>
- * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/TransformationsCoordonneesGeodesiques.pdf">Transformations coordonnées géodésiques</a>
+ * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71</a>
+ * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_80.pdf">NTG_80</a>
  *
  */
 public final class GeodeticConverter {
@@ -57,7 +56,7 @@ public final class GeodeticConverter {
      * @param lat latitude φ en radians
      * @param e   première excentricité de l'ellipsoïde
      * @return    latitude isométrique L
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0001</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0001</a>
      */
     public static double latitudeISOFromLat(double lat, double e) {
         double elt11 = Math.PI / 4d;
@@ -86,7 +85,7 @@ public final class GeodeticConverter {
      * @param e      première excentricité de l'ellipsoïde
      * @param eps    tolérance de convergence ε
      * @return       latitude φ en radians
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0002</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0002</a>
      */
     static double latitudeFromLatitudeISO(double latISo, double e, double eps) {
 
@@ -121,7 +120,7 @@ public final class GeodeticConverter {
      * @param lonMeridian longitude du méridien origine λc en radians
      * @param e           première excentricité de l'ellipsoïde
      * @return            point Lambert (X, Y) en mètres
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0003</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0003</a>
      */
     public static ProjectedPoint geographicToLambertAlg003(double latitude, double longitude, LambertZone zone, double lonMeridian, double e) {
 
@@ -160,7 +159,7 @@ public final class GeodeticConverter {
      * @param lonMeridian longitude du méridien origine λc en radians
      * @param e           première excentricité de l'ellipsoïde
      * @return            point Lambert (X, Y) en mètres
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/TransformationsCoordonneesGeodesiques.pdf">IGN — Transformations de coordonnées géodésiques, §3.4</a>
+     * @see <a href="https://geodesie.ign.fr/algorithmes-geodesiques">IGN — Algorithmes géodésiques (TransformationsCoordonneesGeodesiques §3.4, document retiré)</a>
      */
     public static ProjectedPoint geographicToLambert(double latitude, double longitude, LambertZone zone, double lonMeridian, double e) {
 
@@ -205,7 +204,7 @@ public final class GeodeticConverter {
      * @param e           première excentricité de l'ellipsoïde
      * @param eps         tolérance de convergence ε pour ALG0002
      * @return            point géographique (λ, φ, 0) — longitude et latitude en radians
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0004</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0004</a>
      */
     public static GeographicPoint lambertToGeographic(ProjectedPoint org, LambertZone zone, double lonMeridian, double e, double eps) {
         double n = zone.n();
@@ -236,7 +235,7 @@ public final class GeodeticConverter {
      * @param a   demi-grand axe de l'ellipsoïde en mètres
      * @param e   première excentricité de l'ellipsoïde
      * @return    grande normale N en mètres
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0021</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0021</a>
      */
     static double lambertNormal(double lat, double a, double e) {
 
@@ -264,7 +263,7 @@ public final class GeodeticConverter {
      * @param X0      abscisse en projection du point origine en mètres
      * @param Y0      ordonnée en projection du point origine en mètres
      * @return        {@code double[]} contenant {@code {n, c, lambdaC, Xs, Ys}}
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0019</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0019</a>
      */
     static double[] projectionParametersTangent(double a, double e, double lambda0, double phi0, double k0, double X0, double Y0) {
         double n  = sin(phi0);
@@ -299,7 +298,7 @@ public final class GeodeticConverter {
      * @param X0      abscisse en projection du point origine en mètres
      * @param Y0      ordonnée en projection du point origine en mètres
      * @return        {@code double[]} contenant {@code {n, c, lambdaC, Xs, Ys}}
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_71.pdf">NTG_71 ALG0054</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_71.pdf">NTG_71 ALG0054</a>
      */
     static double[] projectionParametersSecant(double a, double e, double lambda0, double phi0, double phi1, double phi2, double X0, double Y0) {
         double N1 = lambertNormal(phi1, a, e);
@@ -331,7 +330,7 @@ public final class GeodeticConverter {
      * @param a   demi-grand axe de l'ellipsoïde en mètres
      * @param e   première excentricité de l'ellipsoïde
      * @return    point cartésien (X, Y, Z) en mètres
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_80.pdf">NTG_80 ALG0009</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_80.pdf">NTG_80 ALG0009</a>
      */
     static CartesianPoint geographicToCartesian(double lon, double lat, double he, double a, double e) {
         double N = lambertNormal(lat, a, e);
@@ -363,7 +362,7 @@ public final class GeodeticConverter {
      * @param e        première excentricité de l'ellipsoïde
      * @param eps      tolérance de convergence ε en radians
      * @return         point géographique (λ, φ, he) — longitude et latitude en radians, hauteur en mètres
-     * @see <a href="https://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NTG_80.pdf">NTG_80 ALG0012</a>
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_80.pdf">NTG_80 ALG0012</a>
      */
     static GeographicPoint cartesianToGeographic(CartesianPoint org, double meridien, double a, double e, double eps) {
         double x = org.x(), y = org.y(), z = org.z();
@@ -398,7 +397,7 @@ public final class GeodeticConverter {
      * @param org  point source en coordonnées Lambert (X, Y) en mètres
      * @param zone zone Lambert source (LambertI … LambertIIExtended, Lambert93)
      * @return     point géographique WGS84 (λ, φ, he) — longitude et latitude en radians, hauteur en mètres
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/transfo.pdf">IGN — Transformations entre systèmes géodésiques</a>
+     * @see <a href="https://geodesie.ign.fr/algorithmes-geodesiques">IGN — Algorithmes géodésiques (transfo.pdf, document retiré)</a>
      */
     public static GeographicPoint convertToWGS84(ProjectedPoint org, LambertZone zone) {
 
@@ -426,7 +425,7 @@ public final class GeodeticConverter {
      * @param zone      zone Lambert cible (LambertI … LambertIIExtended)
      * @return          point Lambert NTF (X, Y) en mètres
      * @throws UnsupportedOperationException si {@code zone} est Lambert93
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/transfo.pdf">IGN — Transformations entre systèmes géodésiques</a>
+     * @see <a href="https://geodesie.ign.fr/algorithmes-geodesiques">IGN — Algorithmes géodésiques (transfo.pdf, document retiré)</a>
      */
     public static ProjectedPoint convertToLambert(double latitude, double longitude, LambertZone zone) throws UnsupportedOperationException {
 

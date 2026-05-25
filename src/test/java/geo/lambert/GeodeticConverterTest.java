@@ -223,7 +223,7 @@ class GeodeticConverterTest {
      * Verifies {@link GeodeticConverter#geographicToLambert} against §3.4 of the IGN pedagogical
      * document, using geographic coordinates already expressed in the NTF datum (no datum-shift applied).
      *
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/TransformationsCoordonneesGeodesiques.pdf">IGN — Transformations de coordonnées géodésiques, §3.4</a>
+     * @see <a href="https://geodesie.ign.fr/algorithmes-geodesiques">IGN — Algorithmes géodésiques (TransformationsCoordonneesGeodesiques §3.4, document retiré)</a>
      */
     @Test
     void LambertGeographicToLambertTest() {
@@ -242,7 +242,7 @@ class GeodeticConverterTest {
      * Verifies {@link GeodeticConverter#geographicToLambert} against §3.4 of the IGN pedagogical
      * document, using NTF geographic coordinates expressed in grads (converted to radians before the call).
      *
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/TransformationsCoordonneesGeodesiques.pdf">IGN — Transformations de coordonnées géodésiques, §3.4</a>
+     * @see <a href="https://geodesie.ign.fr/algorithmes-geodesiques">IGN — Algorithmes géodésiques (TransformationsCoordonneesGeodesiques §3.4, document retiré)</a>
      */
     @Test
     void LambertConvertNTFToLambertTest() {
@@ -279,7 +279,7 @@ class GeodeticConverterTest {
     /**
      * Verifies {@link GeodeticConverter#lambertToGeographic} against §3.3 of the IGN pedagogical document.
      *
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/pedagogiques/TransformationsCoordonneesGeodesiques.pdf">IGN — Transformations de coordonnées géodésiques, §3.3</a>
+     * @see <a href="https://geodesie.ign.fr/algorithmes-geodesiques">IGN — Algorithmes géodésiques (TransformationsCoordonneesGeodesiques §3.3, document retiré)</a>
      */
     @Test
     void LamberConvertLambertToNTFTest() {
