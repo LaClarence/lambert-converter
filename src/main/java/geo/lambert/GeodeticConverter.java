@@ -5,15 +5,12 @@ import static java.lang.Math.*;
 import static geo.lambert.LambertZone.*;
 
 /*
-https://github.com/yageek/lambert-java
-https://bintray.com/yageek/maven/lambert-java/view/files/net/yageek/lambert/lambert-java/1.1
+
 
 Online samples :
 http://geofree.fr/gf/coordinateConv.asp#listSys
 
---------------------------------------------------------------------------------------
-Install cs2cs on Ubuntu :
-http://www.sarasafavi.com/installing-gdalogr-on-ubuntu.html
+
 
 --------------------------------------------------------------------------------------
 http://cs2cs.mygeodata.eu/
@@ -474,12 +471,91 @@ public final class GeodeticConverter {
      *
      * @param x    abscisse Lambert en mètres
      * @param y    ordonnée Lambert en mètres
-     * @param zone zone Lambert source (LambertI … LambertIIExtended, Lambert93)
+     * @param zone zone Lambert source (LambertI, … ,LambertIIExtended, Lambert93)
      * @return     point géographique WGS84 (λ, φ, he) — longitude et latitude en radians, hauteur en mètres
      */
     public static GeographicPoint convertToWGS84(double x, double y, LambertZone zone) {
 
         return convertToWGS84(new ProjectedPoint(x, y), zone);
+    }
+
+    // =========================================================================
+    // NTv2 — NTF ↔ RGF93 par grille (précision centimétrique)
+    // =========================================================================
+
+    /**
+     * Convertit un point Lambert NTF vers RGF93 géographique (degrés décimaux)
+     * par interpolation bilinéaire dans une grille NTv2.
+     * <p>
+     * Chaîne : Lambert NTF → géographique NTF (ALG0004, Clarke IGN) →
+     * correction grille NTF→RGF93 (fr_ign_ntf_r93.tif) → RGF93 géographique.
+     * <p>
+     * Précision typique avec la grille embarquée : &lt; 0,01 m, contre ±1–3 m pour la
+     * translation de Helmert à 7 paramètres utilisée dans
+     * {@link #convertToWGS84(ProjectedPoint, LambertZone)}.
+     *
+     * @param org  point Lambert NTF (X, Y) en mètres
+     * @param zone zone Lambert NTF source (LambertI … LambertIIExtended) —
+     *             Lambert93 est rejeté car déjà sur RGF93
+     * @param grid grille chargée (ex. {@code Ntv2Grid.getDefault()})
+     * @return point RGF93 en degrés décimaux
+     * @throws UnsupportedOperationException si {@code zone} est Lambert93
+     * @throws IllegalArgumentException      si le point est hors couverture de la grille
+     * @see <a href="https://data.geopf.fr/annexes/ressources/documentation/geodesie/algorithmes/NTG_88.pdf">NTG_88</a>
+     */
+    public static Rgf93Point convertToRGF93(ProjectedPoint org, LambertZone zone, Ntv2Grid grid) {
+        if (zone == Lambert93) {
+            throw new UnsupportedOperationException(
+                    "Lambert 93 est déjà sur RGF93 — aucune transformation NTv2 nécessaire.");
+        }
+        // Lambert NTF → géographique NTF (longitude relative au méridien de Paris)
+        GeographicPoint ntfParis = lambertToGeographic(org, zone, LON_MERID_PARIS, E_CLARK_IGN, DEFAULT_EPS);
+        // Conversion méridien de Paris → Greenwich et radians → degrés pour la grille
+        double latDeg = toDegrees(ntfParis.latitude());
+        double lonDeg = toDegrees(ntfParis.longitude() + LON_MERID_GREENWICH);
+        return grid.ntfToRgf93(latDeg, lonDeg);
+    }
+
+    /**
+     * Surcharge de commodité acceptant les coordonnées X, Y sous forme scalaire.
+     *
+     * @param x    abscisse Lambert NTF en mètres
+     * @param y    ordonnée Lambert NTF en mètres
+     * @param zone zone Lambert NTF source (LambertI … LambertIIExtended)
+     * @param grid grille chargée (ex. {@code Ntv2Grid.getDefault()})
+     * @return point RGF93 en degrés décimaux
+     * @throws UnsupportedOperationException si {@code zone} est Lambert93
+     * @throws IllegalArgumentException      si le point est hors couverture de la grille
+     */
+    public static Rgf93Point convertToRGF93(double x, double y, LambertZone zone, Ntv2Grid grid) {
+        return convertToRGF93(new ProjectedPoint(x, y), zone, grid);
+    }
+
+    /**
+     * Convertit un point RGF93 géographique (degrés décimaux) vers Lambert NTF
+     * par inversion itérative de la grille NTv2.
+     * <p>
+     * Chaîne : RGF93 géographique → correction NTv2 inverse → géographique NTF →
+     * Lambert NTF (ALG0003, Clarke IGN).
+     *
+     * @param rgf93 point RGF93 source en degrés décimaux
+     * @param zone  zone Lambert NTF cible (LambertI … LambertIIExtended)
+     * @param grid  grille NTv2 chargée
+     * @return point Lambert NTF (X, Y) en mètres
+     * @throws UnsupportedOperationException si {@code zone} est Lambert93
+     * @throws IllegalArgumentException      si le point est hors couverture de la grille
+     */
+    public static ProjectedPoint convertToLambertNtf(Rgf93Point rgf93, LambertZone zone, Ntv2Grid grid) {
+        if (zone == Lambert93) {
+            throw new UnsupportedOperationException(
+                    "Lambert 93 est sur RGF93 — utiliser geographicToLambertAlg003 directement.");
+        }
+        // RGF93 → NTF géographique (degrés, méridien Greenwich)
+        double[] ntfDeg = grid.rgf93ToNtf(rgf93.latitude(), rgf93.longitude());
+        // Degrés Greenwich → radians méridien de Paris
+        double latRad    = toRadians(ntfDeg[0]);
+        double lonParis  = toRadians(ntfDeg[1]) - LON_MERID_GREENWICH;
+        return geographicToLambertAlg003(latRad, lonParis, zone, LON_MERID_PARIS, E_CLARK_IGN);
     }
 
     /**
