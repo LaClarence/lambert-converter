@@ -24,8 +24,9 @@ import java.util.Locale;
  * Indicative timing measurements for each public static method of {@link GeodeticConverter}.
  * <p>
  * Each test warms up the JIT with {@value #WARMUP} calls, then measures {@value #ITERATIONS}
- * calls and prints the average time in microseconds. Results are also written to
- * {@code target/timing/geodetic-converter-timing.csv}.
+ * calls and prints the average time in microseconds. Results are also written to a
+ * timestamped CSV file ({@code timing_YYYY_MM_dd.csv}) at the project root so that the
+ * file survives {@code mvn clean}.
  * <p>
  * Note: these are not rigorous benchmarks — use JMH for accurate microbenchmarking.
  */
@@ -34,7 +35,7 @@ class GeodeticConverterTimingTest {
 
     private static final int WARMUP     = 1_000;
     private static final int ITERATIONS = 10_000;
-    private static final Path CSV_PATH  = Path.of("target/timing/geodetic-converter-timing.csv");
+    private static final DateTimeFormatter DATE_FMT      = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss");
     private static final DateTimeFormatter TIMESTAMP_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private static final List<String[]> results = new ArrayList<>();
@@ -53,12 +54,12 @@ class GeodeticConverterTimingTest {
 
     @AfterAll
     static void writeCsv() throws IOException {
-        Files.createDirectories(CSV_PATH.getParent());
-        try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(CSV_PATH))) {
+        Path csvPath = Path.of("timing_" + LocalDateTime.now().format(DATE_FMT) + ".csv");
+        try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(csvPath))) {
             pw.println("timestamp,method,iterations,us_per_call");
             for (String[] row : results) pw.println(String.join(",", row));
         }
-        System.out.println("\nTiming results written to " + CSV_PATH.toAbsolutePath());
+        System.out.println("\nTiming results written to " + csvPath.toAbsolutePath());
     }
 
     /** ALG0001 — {@link GeodeticConverter#latitudeISOFromLat}. */

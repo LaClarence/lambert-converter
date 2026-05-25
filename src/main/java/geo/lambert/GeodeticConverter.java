@@ -335,10 +335,11 @@ public final class GeodeticConverter {
      */
     static CartesianPoint geographicToCartesian(double lon, double lat, double he, double a, double e) {
         double N = lambertNormal(lat, a, e);
+        double common = (N + he) * cos(lat);
 
         return new CartesianPoint(
-                (N + he) * cos(lat) * cos(lon),
-                (N + he) * cos(lat) * sin(lon),
+                common * cos(lon),
+                common * sin(lon),
                 (N * (1 - e * e) + he) * sin(lat));
 
     }
